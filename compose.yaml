@@ -1,0 +1,33 @@
+networks:
+  library-network:
+    driver: bridge
+
+services:
+  librarydb:
+    image: postgres:16.8
+    container_name: librarydb
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: librarydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - library-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_library
+    depends_on:
+      - librarydb
+    ports:
+      - "15432:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    networks:
+      - library-network
+volumes:
+  pgdata:
